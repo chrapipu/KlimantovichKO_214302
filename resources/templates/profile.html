@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Профиль</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+            <div class="container">
+                <h3 class="mb-3 text-center">Профиль</h3>
+                <div th:if="${message}" class="text-center" style="margin-top: 20px;">
+                    <div class="alert alert-success" role="alert">
+                        <strong><span th:text="${message}"></span></strong>
+                    </div>
+                </div>
+                <div class="row mb-3 fs-5">
+                    <div class="col-lg-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center shadow">
+                                <img class="rounded-circle border mb-3 mt-4"
+                                     th:src="'/img/' + ${avatar}"
+                                     height="160" width="160">
+                                <div class="mb-3">
+                                    <form method="post" action="/profile/changeAvatar" enctype="multipart/form-data">
+                                        <input class="form-control" type="file" name="avatar" accept="image/*" required>
+                                        <button class="btn btn-primary w-100 mt-2" type="submit">
+                                            Изменить
+                                        </button>
+                                    </form>
+                                </div>
+                                <div th:if="${role == 'FIZ' or role == 'LEGAL'}">
+                                    <hr>
+                                    <div th:if="${user.getCarts().isEmpty()}">
+                                        <p>Действует первоначальная скидка</p>
+                                        <hr>
+                                    </div>
+                                    <div th:if="${role == 'LEGAL'}">
+                                        <p th:text="'Персональная скидка: ' + ${user.getDiscount() + '%'}"></p>
+                                        <hr>
+                                    </div>
+                                    <div th:if="${role == 'FIZ'}">
+                                        <p th:text="${'Сумарная стоимость покупок: ' + user.getTotalBuyPrice()}"></p>
+                                        <p th:text="${'Накопительная скидка: ' + cumulative + '%'}"></p>
+                                        <p th:if="${settings.getCheckPension(user.date)}"
+                                           th:text="${'Действует пенсионная скидка: ' + settings.pensionDis + '%'}"></p>
+                                        <p th:if="${settings.getCheckBirthday(user.date)}"
+                                           th:text="${'Действует скидка дня рождения: ' + settings.birthdayDis + '%'}"></p>
+                                        <hr>
+                                    </div>
+                                    <p>Согласие на предоставление личных данных для участия в акциях</p>
+                                    <form th:if="${user.userAdd.name() == 'REJECT'}" action="/profile/add"
+                                          method="post">
+                                        <div class="row">
+                                            <div class="col">
+                                                <select name="userAdd" required class="form-select">
+                                                    <option th:each="i : ${userAdds}" th:value="${i}"
+                                                            th:label="${i.name}"
+                                                            th:selected="${i == user.userAdd}"></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-info">Обновить</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <input th:unless="${user.userAdd.name() == 'REJECT'}" type="text" disabled
+                                           th:value="${user.userAdd.name}" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col">
+                                <div class="card shadow mb-3">
+                                    <div class="card-header py-3">
+                                        <p class="text-dark m-0 fw-bold">Настройки профиля</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-2">
+                                            <input class="form-control" type="text" readonly
+                                                   th:value="${user.role.name}">
+                                        </div>
+                                        <form action="/profile/edit" method="post" class="mb-2">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <input class="form-control" type="text"
+                                                           th:value="${user.firstname}" name="firstname"
+                                                           required placeholder="Имя">
+                                                </div>
+                                                <div class="col">
+                                                    <input class="form-control" type="text"
+                                                           th:value="${user.lastname}" name="lastname"
+                                                           required placeholder="Фамилия">
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button class="btn btn-primary" type="submit">Обновить</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <form action="/profile/edit/password" method="post" class="mb-2">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <input class="form-control" type="password"
+                                                           name="passwordOld" placeholder="Текущий пароль">
+                                                </div>
+                                                <div class="col">
+                                                    <input class="form-control" type="password"
+                                                           name="passwordNew" placeholder="Новый пароль">
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button class="btn btn-primary" type="submit">Изменить</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <form th:if="${user.role.name() == 'FIZ'}" action="/profile/edit/date"
+                                              method="post" class="mb-2">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <input class="form-control" type="date" name="date"
+                                                           th:required="${user.date.isEmpty()}"
+                                                           th:disabled="${!user.date.isEmpty()}"
+                                                           th:value="${user.date}">
+                                                </div>
+                                                <div th:if="${user.date.isEmpty()}" class="col-auto">
+                                                    <button class="btn btn-primary" type="submit">Подтвердить день
+                                                        рождение
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <form th:if="${user.role.name() == 'LEGAL'}" action="/profile/edit/name"
+                                              method="post" class="mb-2">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <input class="form-control" type="text" name="name"
+                                                           required th:value="${user.name}"
+                                                           placeholder="Название компании">
+                                                </div>
+                                                <div th:if="${user.date.isEmpty()}" class="col-auto">
+                                                    <button class="btn btn-primary" type="submit">Обновить</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div th:if="${role == 'LEGAL'}">
+                                            <hr>
+                                            <p>Скидки</p>
+                                            <div class="row">
+                                                <div class="col text-center"><span>Персональная</span></div>
+                                                <div class="col text-center"><span>Купоны</span></div>
+                                            </div>
+                                            <div class="row my-2">
+                                                <div hidden class="col text-center"><span>Юр. лицо</span></div>
+                                                <div class="col text-center">
+                                                    <span class="text-success"
+                                                          th:if="${user.legal_personal}">Включено</span>
+                                                    <span class="text-danger" th:unless="${user.legal_personal}">Выключено</span>
+                                                </div>
+                                                <div class="col text-center">
+                                                    <span class="text-success"
+                                                          th:if="${user.legal_coupon}">Включено</span>
+                                                    <span class="text-danger"
+                                                          th:unless="${user.legal_coupon}">Выключено</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div th:if="${role == 'FIZ'}">
+                                            <hr>
+                                            <p>Скидки</p>
+                                            <div class="row">
+                                                <div class="col text-center"><span>Накопительная</span></div>
+                                                <div class="col text-center"><span>Купоны</span></div>
+                                            </div>
+                                            <div class="row my-2">
+                                                <div hidden class="col text-center"><span>Юр. лицо</span></div>
+
+                                                <div class="col text-center">
+                                                    <span class="text-success"
+                                                          th:if="${settings.fiz_cumulative}">Включено</span>
+                                                    <span class="text-danger" th:unless="${settings.fiz_cumulative}">Выключено</span>
+                                                </div>
+                                                <div class="col text-center">
+                                                    <span class="text-success"
+                                                          th:if="${settings.fiz_coupon}">Включено</span>
+                                                    <span class="text-danger"
+                                                          th:unless="${settings.fiz_coupon}">Выключено</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

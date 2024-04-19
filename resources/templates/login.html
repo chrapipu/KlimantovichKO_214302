@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Вход</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body class="bg-gradient-primary">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-12 col-xl-10">
+            <div class="card shadow-lg o-hidden border-0 my-5">
+                <div class="card-body p-0">
+                    <div class="p-2">
+                        <div class="text-center">
+                            <h4 class="text-dark mb-3">С возвращением!</h4>
+                        </div>
+                        <form class="user" method="post" action="/login">
+                            <div class="mb-2">
+                                <input class="form-control form-control-user fs-14px" type="email"
+                                       placeholder="Введите адрес эл. почты" name="username" required>
+                            </div>
+                            <div class="mb-2">
+                                <input class="form-control form-control-user fs-14px" type="password"
+                                       placeholder="Введите пароль" name="password" required>
+                            </div>
+                            <button class="btn btn-primary w-100" type="submit">
+                                Войти
+                            </button>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <a class="fs-4" href="/reg">Регистрация</a>
+                        </div>
+                        <div th:if="${param.error}" class="text-center mt-20px">
+                            <div class="alert alert-success" role="alert">
+                                <strong><span>Некорректный ввод электронной почты или пароля</span></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

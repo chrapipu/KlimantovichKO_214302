@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Товары</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Товары</h3>
+                <div th:if="${message}" class="text-center mt-20px">
+                    <div class="alert alert-success" role="alert">
+                        <strong><span th:text="${message}"></span></strong>
+                    </div>
+                </div>
+                <form action="/products/search" class="mb-3" method="get">
+                    <div class="row p-1 rounded shadow bg-gradient">
+                        <div class="col-auto">
+                            <a href="/products" class="btn btn-dark">Сбросить</a>
+                        </div>
+                        <div class="col">
+                            <input type="text" name="name" class="form-control" placeholder="Название товара"
+                                   th:value="${name}">
+                        </div>
+                        <div class="col-auto">
+                            <select name="sort" class="form-select">
+                                <option value="cheap">Сначала дешевые</option>
+                                <option value="expensive" th:selected="${sort == 'expensive'}">Сначала дорогие</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button href="/products" class="btn btn-primary" type="submit">Поиск</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <div th:each="p : ${products}" class="col-4 p-2 mb-2 fs-5">
+                        <div class="rounded shadow p-1 bg-gradient">
+                            <div style="height: 250px" class="text-center">
+                                <img th:src="'/img/' + ${p.file}" class="rounded"
+                                     style="max-width: 100%;max-height: 250px">
+                            </div>
+                            <br>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Наименование: ' + p.name}"></span>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Средняя оценка: ' + p.score}"></span>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Цена: ' + p.price}"></span>
+                            <span th:if="${p.discount > 0}" class="text-danger d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Скидка: ' + p.discount + '%'}"></span>
+                            <span class="d-flex d-lg-flex device-attributes-span">
+                                <span th:if="${p.count > 0}" th:text="'Количество: ' + ${p.count}"></span>
+                                <span th:if="${p.count == 0}">Нет в наличии</span>
+                            </span>
+                            <form th:if="${(role == 'FIZ' or role == 'LEGAL') and p.count > 0}"
+                                  th:action="'/products/buy/' + ${p.id}"
+                                  method="post" class="mt-1 mb-1" style="padding: 0 5%">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input class="form-control" type="number" name="count" min="1"
+                                               th:max="${p.count}" step="1" required placeholder="Количество">
+                                    </div>
+
+                                    <div th:if="${user.carts.isEmpty()}" class="col-12 mt-2">
+                                        <select name="price" class="form-select">
+                                            <option th:value="${'first:' + (p.price - (p.price * settings.firstDis / 100))}"
+                                                    th:label="${'Скидка первой покупки: ' + (p.price - (p.price * settings.firstDis / 100))}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div th:if="${role == 'FIZ' and !user.carts.isEmpty()}" class="col-12 mt-2">
+                                        <select name="price" class="form-select">
+                                            <option th:value="${'main:' + (p.price - (p.price * p.discount / 100))}"
+                                                    th:label="${'Текущая цена: ' + (p.price - (p.price * p.discount / 100))}"></option>
+                                            <option th:value="${'cumulative:' + (p.price - (p.price * cumulative / 100))}" th:if="${settings.fiz_cumulative}"
+                                                    th:label="${'По накопительной скидке: ' + (p.price - (p.price * cumulative / 100))}"></option>
+                                            <option th:if="${settings.getCheckPension(user.date)}"
+                                                    th:value="${'pension:' + (p.price - (p.price * settings.pensionDis / 100))}"
+                                                    th:label="${'По пенсионной скидке: ' + (p.price - (p.price * settings.pensionDis / 100))}"></option>
+                                            <option th:if="${settings.getCheckBirthday(user.date)}"
+                                                    th:value="${'birthday:' + (p.price - (p.price * settings.birthdayDis / 100))}"
+                                                    th:label="${'По скидке дня рождения: ' + (p.price - (p.price * settings.birthdayDis / 100))}"></option>
+                                            <optgroup th:if="${settings.fiz_coupon}" th:unless="${coupons.isEmpty()}" label="Купоны">
+                                                <option th:each="c : ${coupons}" th:if="${c.unlimited || c.count > 0}"
+                                                        th:value="${c.name + ':' + (p.price - (p.price * c.discount / 100))}"
+                                                        th:label="${c.name + ': ' + (p.price - (p.price * c.discount / 100))}"></option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+
+                                    <div th:if="${role == 'LEGAL' and !user.carts.isEmpty()}" class="col-12 mt-2">
+                                        <select name="price" class="form-select">
+                                            <option th:value="${'main:' + (p.price - (p.price * p.discount / 100))}"
+                                                    th:label="${'Текущая цена: ' + (p.price - (p.price * p.discount / 100))}"></option>
+                                            <option th:value="${'personal:' + (p.price - (p.price * cumulative / 100))}" th:if="${user.legal_personal}"
+                                                    th:label="${'По персональной скидке: ' + (p.price - (p.price * user.discount / 100))}"></option>
+                                            <option th:value="${'multi:' + (p.price - (p.price * settings.multiDis / 100))}"
+                                                    th:label="${'От ' + settings.multi + ' шт: ' + (p.price - (p.price * settings.multiDis / 100))}"></option>
+                                            <optgroup th:if="${user.legal_coupon}" th:unless="${coupons.isEmpty()}" label="Купоны">
+                                                <option th:each="c : ${coupons}" th:if="${c.unlimited || c.count > 0}"
+                                                        th:value="${c.name + ':' + (p.price - (p.price * c.discount / 100))}"
+                                                        th:label="${c.name + ': ' + (p.price - (p.price * c.discount / 100))}"></option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 mt-2">
+                                        <button class="btn btn-primary w-100" type="submit">Купить</button>
+                                    </div>
+                                    <div class="col-12 my-2">
+                                        <a class="btn btn-info w-100"
+                                           th:href="${'/products/' + p.id + '/reviews'}">Отзывы</a>
+                                    </div>
+                                </div>
+                            </form>
+                            <div th:if="${role == 'MANAGER'}" class="row p-2">
+                                <div class="col-12">
+                                    <a th:href="'/products/edit/' + ${p.id}"
+                                       class="btn btn-success w-100">Редактировать</a>
+                                </div>
+                                <div class="col-12 my-1">
+                                    <a th:href="'/products/delete/' + ${p.id}"
+                                       class="btn btn-danger w-100">Удалить</a>
+                                </div>
+                                <div class="col-12">
+                                    <a th:href="'/products/archive/' + ${p.id}"
+                                       class="btn btn-warning w-100">Архивировать</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Мои покупки</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Мои покупки</h3>
+                <div class="row">
+                    <div th:each="c : ${carts}" class="col-3 mb-2 fs-5">
+                        <div class="rounded shadow p-1">
+                            <div style="height: 250px" class="text-center">
+                                <img th:src="'/img/' + ${c.product.file}" class="rounded shadow"
+                                     style="max-width: 100%;max-height: 250px">
+                            </div>
+                            <br>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Наименование: ' + c.product.name}"></span>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Цена: ' + c.price}"></span>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Количество: ' + c.count}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Архив товаров</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Архив товаров</h3>
+                <div class="row g-0 row-cols-5 d-lg-flex">
+                    <div th:each="p : ${products}" class="col-3 mb-2 fs-5">
+                        <div class="rounded shadow p-1">
+                            <div style="height: 250px" class="text-center">
+                                <img th:src="'/img/' + ${p.file}" class="rounded shadow"
+                                     style="max-width: 100%;max-height: 250px">
+                            </div>
+                            <br>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Наименование: ' + p.name}"></span>
+                            <span class="d-flex d-lg-flex device-attributes-span"
+                                  th:text="${'Цена: ' + p.price}"></span>
+                            <span class="d-flex d-lg-flex device-attributes-span">
+                                <span th:if="${p.count > 0}" th:text="'Количество: ' + ${p.count}"></span>
+                                <span th:if="${p.count == 0}">Нет в наличии</span>
+                            </span>
+                            <div th:if="${role == 'MANAGER'}" class="row p-2">
+                                <div class="col-12">
+                                    <a th:href="'/products/edit/' + ${p.id}"
+                                       class="btn btn-success w-100">Редактировать</a>
+                                </div>
+                                <div class="col-12 my-1">
+                                    <a th:href="'/products/delete/' + ${p.id}"
+                                       class="btn btn-danger w-100">Удалить</a>
+                                </div>
+                                <div class="col-12">
+                                    <a th:href="'/products/archive/active/' + ${p.id}"
+                                       class="btn btn-warning w-100">Активировать</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

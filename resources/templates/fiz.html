@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Физ. лица</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Физ. лица</h3>
+                <div class="row fs-4">
+                    <div class="col text-center"><span>Эл. почта</span></div>
+                    <div class="col text-center"><span>День рождение</span></div>
+                    <div class="col text-center"><span>Сумарная стоимость покупок</span></div>
+                </div>
+                <div th:each="i : ${users}" class="row mb-2 fs-5">
+                    <div class="col">
+                        <span th:text="${i.username}"></span>
+                    </div>
+                    <div class="col text-center">
+                        <span th:text="${i.date}"></span>
+                    </div>
+                    <div class="col text-end">
+                        <span th:text="${i.totalBuyPrice}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

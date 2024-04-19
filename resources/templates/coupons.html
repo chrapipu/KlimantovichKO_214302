@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Купоны</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Купоны</h3>
+                <form th:if="${role == 'MANAGER'}" method="post" action="/coupons/add">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="name" placeholder="Название" minlength="5" maxlength="5"
+                                   class="form-control" required>
+                        </div>
+                        <div class="col">
+                            <select name="ownerId" required class="form-select">
+                                <option th:each="o : ${owners}" th:value="${o.id}"
+                                        th:label="${o.firstname + ' ' + o.lastname}"></option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <input type="number" name="discount" min="1" max="100" step="1" placeholder="Скидка"
+                                   class="form-control" required>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" name="count" min="0" step="1"
+                                   placeholder="Количество (0 = многоразовый)"
+                                   class="form-control" required>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary" type="submit">Добавить</button>
+                        </div>
+                    </div>
+                </form>
+                <hr th:if="${role == 'MANAGER'}">
+                <div th:each="i : ${coupons}" class="row align-items-center">
+                    <div class="col mb-2">
+                        <span th:text="${'Название купона: ' + i.name}"></span>
+                    </div>
+                    <div th:if="${role == 'MANAGER'}" class="col mb-2">
+                        <span th:text="${'Владелец: ' + i.owner.firstname + ' ' + i.owner.lastname}"></span>
+                    </div>
+                    <div class="col mb-2">
+                        <span th:text="${'Скидка: ' + i.discount + '%'}"></span>
+                    </div>
+                    <div th:unless="${i.unlimited}" class="col mb-2">
+                        <span th:text="${'Количество: ' + i.count}"></span>
+                    </div>
+                    <div th:if="${i.unlimited}" class="col mb-2">
+                        <span>Многоразовый</span>
+                    </div>
+                    <div th:if="${role == 'MANAGER'}" class="col-auto mb-2">
+                        <a class="btn btn-danger" th:href="${'/coupons/delete/' + i.id}">Удалить</a>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

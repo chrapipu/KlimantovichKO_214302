@@ -1,0 +1,78 @@
+<nav th:fragment="nav" class="navbar navbar-expand-lg bg-dark mb-3" data-bs-theme="dark">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav text-light fs-5 text-center align-items-center" id="accordionSidebar">
+                <li th:if="${role == 'ADMIN'}" class="nav-item">
+                    <a class="nav-link" href="/category">Категории</a>
+                </li>
+
+                <li th:if="${role == 'MANAGER'}" class="nav-item">
+                    <a class="nav-link" href="/stats">Статистика</a>
+                </li>
+
+                <li th:if="${role == 'MANAGER'}" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                       aria-haspopup="true" aria-expanded="false">Список</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/fiz">Физ. лица</a>
+                        <a class="dropdown-item" href="/legal">Юр. лица</a>
+                        <a class="dropdown-item" href="/settings">Настройки</a>
+                        <a class="dropdown-item" href="/coupons">Купоны</a>
+                    </div>
+                </li>
+
+                <li th:if="${role == 'MANAGER'}" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                       aria-haspopup="true" aria-expanded="false">Архив</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/products/archive">Товаров</a>
+                        <a class="dropdown-item" href="/apps/archive">Заявок</a>
+                    </div>
+                </li>
+
+                <li th:if="${role == 'MANAGER'}" class="nav-item">
+                    <a class="nav-link" href="/products/add">Добавить товар</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Товары</a>
+                </li>
+                <li th:if="${role == 'MANAGER' or role == 'LEGAL'}" class="nav-item">
+                    <a class="nav-link" href="/apps">Заявки</a>
+                </li>
+                <li th:if="${role == 'FIZ' or role == 'LEGAL'}" class="nav-item">
+                    <a class="nav-link" href="/products/my">Мои покупки</a>
+                </li>
+                <li th:if="${role != 'NOT'}" class="nav-item">
+                    <a class="nav-link" href="/profile">Профиль</a>
+                </li>
+                <li th:if="${role == 'ADMIN'}" class="nav-item">
+                    <a class="nav-link" href="/profiles">Пользователи</a>
+                </li>
+                <li th:if="${role == 'NOT'}" class="nav-item">
+                    <a class="nav-link" href="/login">Вход</a>
+                </li>
+                <li th:if="${role == 'NOT'}" class="nav-item">
+                    <a class="nav-link" href="/reg">Регистрация</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">О нас</a>
+                </li>
+                <li th:unless="${role == 'NOT'}" class="nav-item">
+                    <a class="nav-link" href="/logout">Выход</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav flex-nowrap ms-auto fs-5">
+                <li class="nav-item dropdown no-arrow">
+                    <div class="nav-item dropdown no-arrow">
+                        <span th:text="${firstnameLastname}" class="d-none d-lg-inline me-2 text-gray-600 small"></span>
+                        <img class="rounded-circle border img-profile shadow bg-white" th:src="'/img/' + ${avatar}" height="50" width="50">
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

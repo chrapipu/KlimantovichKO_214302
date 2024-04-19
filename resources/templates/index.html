@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Все устройство</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Устройства</h3>
+                <form action="/search/status_type" method="post" class="mb-20px">
+                    <div class="row">
+                        <div class="col">
+                            <select class="form-select" name="status">
+                                <option th:each="status : ${statuses}"
+                                        th:value="${status}"
+                                        th:label="${status.name}"
+                                        th:selected="${status == deviceStatusSelected}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <select class="form-select" name="type">
+                                <option th:each="type : ${types}"
+                                        th:value="${type}"
+                                        th:label="${type.name}"
+                                        th:selected="${type == deviceTypeSelected}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col mxw-100px">
+                            <button class="btn btn-primary" type="submit">Поиск</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row g-0 row-cols-5 d-lg-flex">
+                    <div th:each="device : ${devices}" class="col device-col">
+                        <img th:src="'/img/' + ${device.file}"
+                             class="d-lg-flex justify-content-lg-center align-items-lg-center device-col-img">
+                        <span class="d-flex d-lg-flex device-attributes-span">Название:&nbsp;
+                            <span th:text="${device.name}"></span>
+                        </span>
+                        <span class="d-flex d-lg-flex device-attributes-span">Владелец:&nbsp;
+                            <span th:text="${device.owner.firstname + ' ' + device.owner.lastname}"></span>
+                        </span>
+                        <span class="d-flex d-lg-flex device-attributes-span">Тип:&nbsp;
+                            <span th:text="${device.deviceType.name}"></span>
+                        </span>
+                        <span th:if="${device.description}" class="d-flex d-lg-flex device-attributes-span">Описание:&nbsp;
+                            <span th:text="${device.description}"></span>
+                        </span>
+                        <span class="d-flex d-lg-flex device-attributes-span mb-5px">Статус:&nbsp;
+                            <span th:if="${device.status.name == 'Исправен'}" class="text-success">Исправен</span>
+                            <span th:if="${device.status.name == 'Неисправен'}" class="text-danger">Неисправен</span>
+                            <span th:if="${device.status.name == 'Протестировать'}"
+                                  class="text-danger">Протестировать</span>
+                            <span th:if="${device.status.name == 'Ремонтируется'}"
+                                  class="text-primary">Ремонтируется</span>
+                            <span th:if="${device.status.name == 'Тестируется'}"
+                                  class="text-primary">Тестируется</span>
+                        </span>
+                        <span th:if="${device.serves}"
+                              class="d-flex d-lg-flex device-attributes-span">Обслуживает:&nbsp;
+                            <span th:text="${device.serves.user.firstname + ' ' + device.serves.user.lastname}"></span>
+                        </span>
+                        <a th:if="${device.status.name == 'Неисправен' && role == 'TECHNICIAN'}"
+                           th:href="'/device/' + ${device.id} + '/repair'"
+                           class="btn btn-primary device-attributes-button">Ремонтировать</a>
+                        <a th:if="${device.status == test && role == 'TESTER'}"
+                           th:href="'/device/' + ${device.id} + '/tested'"
+                           class="btn btn-primary device-attributes-button">Тестировать</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

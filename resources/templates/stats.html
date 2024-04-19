@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Статистика</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Статистика</h3>
+                <hr>
+                <a class="btn btn-primary w-100" onclick="generatePDF()">PDF</a>
+                <hr>
+                <div id="draw" class="w-100" style="height: 400px"></div>
+                <hr>
+                <div id="drawCat" class="w-100" style="height: 400px"></div>
+                <hr>
+                <div id="generatePDF" class="p-2 text-dark mb-5">
+                    <div class="row mb-2 text-center">
+                        <div class="col">
+                            <p class="fs-4 m-0">Наименование</p>
+                        </div>
+                        <div class="col">
+                            <p class="fs-4 m-0">Цена</p>
+                        </div>
+                        <div class="col">
+                            <p class="fs-4 m-0">Количество</p>
+                        </div>
+                        <div class="col">
+                            <p class="fs-4 m-0">Прибыль</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0" th:each="i : ${incomes}">
+                        <div class="col">
+                            <p class="fs-4 m-0 text-center" th:text="${i.product.name}"></p>
+                        </div>
+                        <div class="col">
+                            <p class="fs-4 m-0 text-end" th:text="${i.product.price}"></p>
+                        </div>
+                        <div class="col">
+                            <p class="fs-4 m-0 text-end" th:text="${i.count}"></p>
+                        </div>
+                        <div class="col">
+                            <p class="fs-4 m-0 text-end" th:text="${i.income}"></p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    function generatePDF() {
+        html2pdf(document.getElementById('generatePDF'));
+    }
+</script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script th:inline="javascript" type="text/javascript">
+    var stringIncomes = /*[[${stringIncomes}]]*/ [];
+    var intIncomes = /*[[${intIncomes}]]*/ [];
+    var catString = /*[[${catString}]]*/ [];
+    var catInt = /*[[${catInt}]]*/ [];
+</script>
+
+<script src="/js/stats.js"></script>
+
+</body>
+
+</html>

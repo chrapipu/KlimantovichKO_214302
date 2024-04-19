@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Категории</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Категории</h3>
+
+                <form action="/category/add" method="post">
+                    <div class="row p-1 bg-gradient rounded shadow">
+                        <div class="col">
+                            <input type="text" required class="form-control" name="name" placeholder="Наименование">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Добавить</button>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <form th:each="i : ${categories}" th:action="${'/category/' + i.id + '/edit'}" method="post" class="mb-2">
+                    <div class="row p-1 bg-gradient rounded shadow">
+                        <div class="col">
+                            <input type="text" required class="form-control" name="name" placeholder="Наименование" th:value="${i.name}">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Обновить</button>
+                        </div>
+                        <div class="col-auto">
+                            <a th:href="${'/category/' + i.id + '/delete'}" class="btn btn-danger">Удалить</a>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Профили</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Пользователи</h3>
+                <div th:if="${message}" class="text-center" style="margin-top: 20px;">
+                    <div class="alert alert-success" role="alert">
+                        <strong><span th:text="${message}"></span></strong>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col text-center">
+                        <strong>Имя</strong>
+                    </div>
+                    <div class="col text-center">
+                        <strong>Фамилия</strong>
+                    </div>
+                    <div class="col text-center">
+                        <strong>Скидка</strong>
+                    </div>
+                    <div class="col text-center">
+                        <strong>Выберите роль</strong>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-1"></div>
+                </div>
+                <form class="mb-2" th:each="i : ${usersList}" th:unless="${user.id == i.id}"
+                      th:action="'/profiles/' + ${i.id} + '/edit'" method="post">
+                    <div class="row">
+                        <div class="col">
+                            <input th:placeholder="${i.username}"
+                                   type="text" class="form-control" readonly/>
+                        </div>
+                        <div class="col">
+                            <input th:placeholder="${i.lastname}"
+                                   type="text" class="form-control" readonly/>
+                        </div>
+                        <div class="col">
+                            <input th:placeholder="${i.discount}"
+                                   type="email" class="form-control" readonly/>
+                        </div>
+                        <div class="col">
+                            <select class="form-select" name="role">
+                                <option th:each="role : ${roles}"
+                                        th:value="${role}"
+                                        th:label="${role.name}"
+                                        th:selected="${role == i.role}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary w-100" type="submit">Изменить</button>
+                        </div>
+                        <div class="col-1">
+                            <a class="btn btn-danger w-100"
+                               th:href="'/profiles/' + ${i.id} + '/delete'">Удалить</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

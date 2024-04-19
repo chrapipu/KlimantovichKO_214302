@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Юр. лица</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Юр. лица</h3>
+                <div class="row fs-4">
+                    <div class="col text-center"><span>Эл. почта</span></div>
+                    <div class="col text-center"><span>Название компании</span></div>
+                    <div class="col text-center"><span>Персональная скидка</span></div>
+                    <div class="col-2 text-center"><span>Персональная</span></div>
+                    <div class="col-2 text-center"><span>Купоны</span></div>
+                </div>
+                <div th:each="i : ${users}" class="row mb-2 fs-5">
+                    <div class="col">
+                        <span th:text="${i.username}"></span>
+                    </div>
+                    <div class="col">
+                        <span th:text="${i.name}"></span>
+                    </div>
+                    <div class="col text-end">
+                        <span th:text="${i.discount} + '%'"></span>
+                    </div>
+                    <div class="col-2 text-center">
+                        <a th:href="${'/legal/' + i.id + '/personal'}">
+                            <span class="text-success" th:if="${i.legal_personal}">Включено</span>
+                            <span class="text-danger" th:unless="${i.legal_personal}">Выключено</span>
+                        </a>
+                    </div>
+<!--                    <div class="col-2 text-center">-->
+<!--                        <a th:href="${'/legal/' + i.id + '/cumulative'}">-->
+<!--                            <span class="text-success" th:if="${i.legal_cumulative}">Включено</span>-->
+<!--                            <span class="text-danger" th:unless="${i.legal_cumulative}">Выключено</span>-->
+<!--                        </a>-->
+<!--                    </div>-->
+                    <div class="col-2 text-center">
+                        <a th:href="${'/legal/' + i.id + '/coupon'}">
+                            <span class="text-success" th:if="${i.legal_coupon}">Включено</span>
+                            <span class="text-danger" th:unless="${i.legal_coupon}">Выключено</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

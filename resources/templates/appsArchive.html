@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Архив заявок</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Архив заявок</h3>
+                <div th:each="i : ${apps}" class="row">
+                    <div class="col-12 mb-2">
+                        <span th:text="${i.text}"></span>
+                    </div>
+                    <div class="col-2">
+                        <span th:text="'Скидка: ' + ${i.discount} + '%'"></span>
+                    </div>
+                    <div class="col-2">
+                        <span th:text="'Статус: ' + ${i.status.name}"></span>
+                    </div>
+                    <div th:if="${role == 'MANAGER' and i.status.name == 'WAITING'}" class="col-auto">
+                        <a th:href="'/apps/confirm/' + ${i.id}" class="btn btn-success">Одобрить</a>
+                    </div>
+                    <div th:if="${role == 'MANAGER' and i.status.name == 'WAITING'}" class="col-auto">
+                        <button class="btn btn-danger" type="submit">Отказать</button>
+                    </div>
+                    <div th:if="${role == 'MANAGER' and i.status.name == 'WAITING'}" class="col">
+                        <input type="text" name="reason" min="0" max="100" step="1"
+                               placeholder="Причина отказа (опционально)" class="form-control">
+                    </div>
+                    <div th:unless="${i.reason.isEmpty()}" class="col">
+                        <span th:text="'Причина отказа: ' + ${i.reason}"></span>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

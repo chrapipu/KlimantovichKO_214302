@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Отзывы</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Отзывы</h3>
+                <form th:if="${role == 'FIZ' or role == 'LEGAL'}" class="mb-2"
+                      th:action="'/products/' + ${product.id} + '/reviews/add'" method="post">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="review" class="form-control" required placeholder="Отзыв"/>
+                        </div>
+                        <div class="col-2">
+                            <input type="number" name="score" min="0" max="10" step="1" class="form-control" required
+                                   placeholder="Оценка"/>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary w-100" type="submit">Добавить</button>
+                        </div>
+                    </div>
+                    <hr>
+                </form>
+                <div th:each="r : ${reviews}">
+                    <p class="lead" th:text="${r.owner.firstname + ' ' + r.owner.lastname + ' | '+ r.date + ' | Оценка: ' + r.score}"></p>
+                    <p th:text="${r.review}"></p>
+                    <hr>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

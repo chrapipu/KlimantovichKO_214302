@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Заявки</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Заявки</h3>
+                <form th:if="${role != 'MANAGER'}" method="post" action="/apps/add">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="text" placeholder="Текст" class="form-control" required>
+                        </div>
+                        <div class="col-2">
+                            <input type="number" name="discount" min="1" max="100" step="1" placeholder="Скидка"
+                                   class="form-control" required>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary" type="submit">Отправить</button>
+                        </div>
+                    </div>
+                </form>
+                <hr th:if="${role != 'MANAGER'}">
+                <form th:each="i : ${apps}" method="post" th:action="'/apps/reject/' + ${i.id}">
+                    <div class="row fs-5">
+                        <div class="col-12 mb-2">
+                            <span th:text="${i.text}"></span>
+                        </div>
+                        <div class="col-2">
+                            <span th:text="'Скидка: ' + ${i.discount} + '%'"></span>
+                        </div>
+                        <div class="col-2">
+                            <span th:text="'Статус: ' + ${i.status.name}"></span>
+                        </div>
+                        <div th:if="${role == 'MANAGER' and i.status.name() == 'WAITING'}" class="col-auto">
+                            <a th:href="'/apps/confirm/' + ${i.id}" class="btn btn-success">Одобрить</a>
+                        </div>
+                        <div th:if="${role == 'MANAGER' and i.status.name() == 'WAITING'}" class="col-auto">
+                            <button class="btn btn-danger" type="submit">Отказать</button>
+                        </div>
+                        <div th:if="${role == 'MANAGER' and i.status.name() == 'WAITING'}" class="col">
+                            <input type="text" name="reason" min="0" max="100" step="1"
+                                   placeholder="Причина отказа (опционально)" class="form-control">
+                        </div>
+                        <div th:unless="${i.reason.isEmpty()}" class="col">
+                            <span th:text="'Причина отказа: ' + ${i.reason}"></span>
+                        </div>
+                    </div>
+                    <hr>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

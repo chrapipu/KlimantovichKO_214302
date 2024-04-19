@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Настройки</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Настройки</h3>
+                <div th:if="${message}" class="text-center mt-20px">
+                    <div class="alert alert-success" role="alert">
+                        <strong><span th:text="${message}"></span></strong>
+                    </div>
+                </div>
+                <div class="fs-5">
+                    <p>Первая скидка (для всех)</p>
+                    <form method="post" action="/settings/edit/firstDis">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" name="firstDis" placeholder="Первая скидка" class="form-control"
+                                       min="1" step="1" max="100" th:value="${settings.firstDis}">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Обновить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <p>Скидка за массовость (для юр. лиц)</p>
+                    <form method="post" action="/settings/edit/multi">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" name="multi" placeholder="Количество" class="form-control"
+                                       min="1" step="1" th:value="${settings.multi}">
+                            </div>
+                            <div class="col">
+                                <input type="number" name="multiDis" placeholder="Скидка" class="form-control"
+                                       min="1" step="1" max="100" th:value="${settings.multiDis}">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Обновить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <p>Пенсионная скидка (для физ. лиц)</p>
+                    <form method="post" action="/settings/edit/pension">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" name="pensionAge" placeholder="Пенсионный возраст"
+                                       class="form-control"
+                                       min="1" step="1" th:value="${settings.pensionAge}">
+                            </div>
+                            <div class="col">
+                                <input type="number" name="pensionDis" placeholder="Скидка" class="form-control"
+                                       min="1" step="1" max="100" th:value="${settings.pensionDis}">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Обновить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <p>Скидка во время дня рождения (для физ. лиц)</p>
+                    <form method="post" action="/settings/edit/birthday">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" name="birthday" placeholder="Продолжительность дней"
+                                       class="form-control"
+                                       min="1" step="1" th:value="${settings.birthday}">
+                            </div>
+                            <div class="col">
+                                <input type="number" name="birthdayDis" placeholder="Скидка" class="form-control"
+                                       min="1" step="1" max="100" th:value="${settings.birthdayDis}">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Обновить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <p>Скидки (для физ. лиц)</p>
+                    <div class="row">
+                        <div class="col-2 text-center"><span>Накопительная</span></div>
+                        <div class="col-2 text-center"><span>Купоны</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2 text-center">
+                            <a th:href="${'/settings/fiz/cumulative'}">
+                                <span class="text-success" th:if="${settings.fiz_cumulative}">Включено</span>
+                                <span class="text-danger" th:unless="${settings.fiz_cumulative}">Выключено</span>
+                            </a>
+                        </div>
+                        <div class="col-2 text-center">
+                            <a th:href="${'/settings/fiz/coupon'}">
+                                <span class="text-success" th:if="${settings.fiz_coupon}">Включено</span>
+                                <span class="text-danger" th:unless="${settings.fiz_coupon}">Выключено</span>
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+                    <p>Накопительные скидки (для физ. лиц)</p>
+                    <form action="/settings/cumulatives/add" method="post">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" min="0" step="1" max="100000" name="min" required
+                                       class="form-control"
+                                       placeholder="Минимальное значение">
+                            </div>
+                            <div class="col">
+                                <input type="number" min="0" step="1" max="100000" name="max" required
+                                       class="form-control"
+                                       placeholder="Максимальное значение (0 = бесконечно)">
+                            </div>
+                            <div class="col">
+                                <input type="number" min="1" step="1" max="100" name="discount" required
+                                       class="form-control" placeholder="Скидка">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Добавить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p>* При добавлении нужно соблюдать цепочку значений</p>
+                    <hr>
+                    <div th:each="i : ${cumulatives}" class="row mb-2">
+                        <div class="col-3">
+                        <span th:if="${i.max != 0}"
+                              th:text="${'С ' + i.min + ' до ' + i.max + ': ' + i.discount + '%'}"></span>
+                            <span th:if="${i.max == 0}" th:text="${'С ' + i.min + ': ' + i.discount + '%'}"></span>
+                        </div>
+                        <div class="col-auto">
+                            <a class="btn btn-danger" th:href="${'/settings/cumulatives/delete/' + i.id}">Удалить</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

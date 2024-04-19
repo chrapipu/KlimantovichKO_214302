@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Добавить товар</title>
+</head>
+
+<head th:insert="blocks/head :: head"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <nav th:insert="blocks/nav :: nav"></nav>
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+
+            <div class="container">
+                <h3 class="mb-3 text-center">Добавить товар</h3>
+                <div th:if="${message}" class="text-center" style="margin-top: 20px;">
+                    <div class="alert alert-success" role="alert">
+                        <strong><span th:text="${message}"></span></strong>
+                    </div>
+                </div>
+                <form action="/products/add" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-4 mb-3">
+                            <label class="form-label text-dark">
+                                <strong>Наименование</strong>
+                            </label>
+                            <input class="form-control" type="text" name="name" required>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label class="form-label text-dark">
+                                <strong>Категория</strong>
+                            </label>
+                            <select name="categoryId" required class="form-select">
+                                <option th:each="i : ${categories}" th:value="${i.id}" th:label="${i.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label class="form-label text-dark">
+                                <strong>Фотография</strong>
+                            </label>
+                            <input class="form-control" type="file" name="file" accept="image/*" required>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label class="form-label text-dark">
+                                <strong>Цена</strong>
+                            </label>
+                            <input class="form-control" type="number" name="price" min="1" max="1000" step="1" required>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label class="form-label text-dark">
+                                <strong>Скидка</strong>
+                            </label>
+                            <input class="form-control" type="number" name="discount" min="0" max="100" step="1" required>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label class="form-label text-dark">
+                                <strong>Количество</strong>
+                            </label>
+                            <input class="form-control" type="number" name="count" min="1" max="1000" step="1" required>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" type="submit" style="margin-right: 10px;">Добавить</button>
+                    <button class="btn btn-secondary" type="reset">Очистить</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
